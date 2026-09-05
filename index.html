@@ -1,3 +1,4 @@
+<meta name="viewport" content="width=device-width, initial-scale=1">
 <title>Chelsea, Mau Call Ga?</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -299,6 +300,35 @@
     color: var(--blurple);
     font-family: "DM Mono", ui-monospace, monospace;
     font-size: 13px;
+  }
+
+  /* ---- layar kecil: semuanya diperbesar ---- */
+  @media (max-width: 620px) {
+    body { padding: 16px 12px 28px; align-items: flex-start; }
+
+    .window { border-radius: 24px; }
+
+    .bar { padding: 16px 18px; gap: 14px; }
+    .avatar { width: 48px; height: 48px; font-size: 23px; }
+    .dot { width: 15px; height: 15px; }
+    .who b { font-size: 17px; }
+    .who span { font-size: 12px; }
+    .ping { font-size: 12px; }
+
+    .body { padding: 24px 18px 14px; }
+    .bubble { padding: 22px 22px; max-width: none; }
+    .bubble h1 { font-size: clamp(32px, 9vw, 42px); }
+    .stamp { font-size: 12px; }
+
+    .stage { height: 300px; }
+    .btn { font-size: 21px; padding: 18px 38px; }
+
+    .foot { font-size: 12px; padding: 14px 18px 18px; }
+
+    .done { padding: 40px 22px 34px; }
+    .done h2 { font-size: 32px; }
+    .done p { font-size: 17px; }
+    .done a { font-size: 14px; }
   }
 </style>
 
