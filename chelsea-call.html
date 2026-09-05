@@ -1,0 +1,472 @@
+<title>Chelsea, Mau Call Ga?</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Fredoka:wght@400;500;600&family=Karla:ital,wght@0,400;0,700;1,400&family=DM+Mono:wght@400;500&display=swap">
+
+<style>
+  :root {
+    --ground: #efe9f8;
+    --panel: #ffffff;
+    --panel-2: #f7f3fc;
+    --bubble: #f1ecfa;
+    --ink: #1d1a2c;
+    --muted: #6e6987;
+    --line: #e2daf0;
+    --blurple: #5a5ce0;
+    --blurple-hi: #4a4bd0;
+    --on-blurple: #ffffff;
+    --pink: #e8437a;
+    --green: #1f9e5c;
+    --shadow: 0 18px 40px -22px rgba(29, 26, 44, .45);
+  }
+
+  @media (prefers-color-scheme: dark) {
+    :root:not([data-theme="light"]) {
+      --ground: #14121c;
+      --panel: #221f2e;
+      --panel-2: #1a1826;
+      --bubble: #2b2739;
+      --ink: #f3effc;
+      --muted: #a49dbd;
+      --line: #332e45;
+      --blurple: #8082f4;
+      --blurple-hi: #9092ff;
+      --on-blurple: #14121c;
+      --pink: #ff77a3;
+      --green: #45dd8d;
+      --shadow: 0 22px 48px -24px rgba(0, 0, 0, .8);
+    }
+  }
+
+  :root[data-theme="dark"] {
+    --ground: #14121c;
+    --panel: #221f2e;
+    --panel-2: #1a1826;
+    --bubble: #2b2739;
+    --ink: #f3effc;
+    --muted: #a49dbd;
+    --line: #332e45;
+    --blurple: #8082f4;
+    --blurple-hi: #9092ff;
+    --on-blurple: #14121c;
+    --pink: #ff77a3;
+    --green: #45dd8d;
+    --shadow: 0 22px 48px -24px rgba(0, 0, 0, .8);
+  }
+
+  * { box-sizing: border-box; }
+
+  body {
+    margin: 0;
+    min-height: 100vh;
+    background: var(--ground);
+    background-image:
+      radial-gradient(circle at 12% 18%, color-mix(in srgb, var(--blurple) 22%, transparent), transparent 45%),
+      radial-gradient(circle at 88% 82%, color-mix(in srgb, var(--pink) 18%, transparent), transparent 42%);
+    color: var(--ink);
+    font-family: "Karla", ui-sans-serif, system-ui, sans-serif;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 28px 18px 40px;
+  }
+
+  #spark {
+    position: fixed;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    pointer-events: none;
+    z-index: 5;
+  }
+
+  .window {
+    position: relative;
+    z-index: 2;
+    width: min(560px, 100%);
+    background: var(--panel);
+    border: 1px solid var(--line);
+    border-radius: 20px;
+    box-shadow: var(--shadow);
+    overflow: hidden;
+  }
+
+  /* ---- header: a voice channel row ---- */
+  .bar {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 14px 18px;
+    background: var(--panel-2);
+    border-bottom: 1px solid var(--line);
+  }
+
+  .avatar {
+    position: relative;
+    width: 40px;
+    height: 40px;
+    flex: none;
+    border-radius: 50%;
+    background: var(--blurple);
+    color: var(--on-blurple);
+    font-family: "Fredoka", sans-serif;
+    font-size: 19px;
+    display: grid;
+    place-items: center;
+  }
+
+  .dot {
+    position: absolute;
+    right: -2px;
+    bottom: -2px;
+    width: 13px;
+    height: 13px;
+    border-radius: 50%;
+    background: var(--green);
+    border: 3px solid var(--panel-2);
+  }
+
+  .who {
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+    min-width: 0;
+  }
+
+  .who b {
+    font-family: "Fredoka", sans-serif;
+    font-weight: 500;
+    font-size: 15px;
+  }
+
+  .who span {
+    font-family: "DM Mono", ui-monospace, monospace;
+    font-size: 11px;
+    letter-spacing: .04em;
+    color: var(--muted);
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+
+  .ping {
+    margin-left: auto;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    font-family: "DM Mono", ui-monospace, monospace;
+    font-size: 11px;
+    color: var(--green);
+  }
+
+  .ping i {
+    width: 6px;
+    height: 6px;
+    border-radius: 50%;
+    background: var(--green);
+    animation: pulse 2s ease-in-out infinite;
+  }
+
+  @keyframes pulse { 0%, 100% { opacity: 1; } 50% { opacity: .25; } }
+
+  /* ---- the message ---- */
+  .body { padding: 26px 22px 12px; }
+
+  .bubble {
+    background: var(--bubble);
+    border-radius: 16px 16px 16px 4px;
+    padding: 20px 22px;
+    max-width: 30ch;
+  }
+
+  .bubble h1 {
+    margin: 0;
+    font-family: "Fredoka", sans-serif;
+    font-weight: 500;
+    font-size: clamp(26px, 6.4vw, 34px);
+    line-height: 1.18;
+    letter-spacing: -.01em;
+    text-wrap: balance;
+  }
+
+  .bubble h1 em {
+    font-style: normal;
+    color: var(--blurple);
+  }
+
+  .stamp {
+    margin: 8px 0 0;
+    font-family: "DM Mono", ui-monospace, monospace;
+    font-size: 11px;
+    color: var(--muted);
+  }
+
+  /* ---- the two choices ---- */
+  .stage {
+    position: relative;
+    height: 210px;
+    margin: 18px 0 0;
+    display: grid;
+    place-items: center;
+  }
+
+  .btn {
+    font-family: "Fredoka", sans-serif;
+    font-weight: 500;
+    font-size: 17px;
+    border: 0;
+    border-radius: 999px;
+    padding: 14px 30px;
+    cursor: pointer;
+    white-space: nowrap;
+    -webkit-tap-highlight-color: transparent;
+  }
+
+  .btn:focus-visible {
+    outline: 3px solid var(--pink);
+    outline-offset: 3px;
+  }
+
+  .yes {
+    background: var(--blurple);
+    color: var(--on-blurple);
+    text-decoration: none;
+    display: inline-flex;
+    align-items: center;
+    gap: 9px;
+    box-shadow: 0 10px 22px -12px var(--blurple);
+    transition: transform .16s ease, background .16s ease;
+  }
+
+  .yes:hover { background: var(--blurple-hi); transform: translateY(-2px) scale(1.03); }
+  .yes:active { transform: translateY(0) scale(.98); }
+
+  .no {
+    position: absolute;
+    left: 0;
+    top: 0;
+    background: transparent;
+    color: var(--muted);
+    border: 1.5px solid var(--line);
+    transition: left .22s cubic-bezier(.34, 1.3, .64, 1), top .22s cubic-bezier(.34, 1.3, .64, 1), transform .22s ease, font-size .22s ease, padding .22s ease;
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .no, .yes { transition: none; }
+    .ping i { animation: none; }
+  }
+
+  /* ---- footer ---- */
+  .foot {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 12px;
+    padding: 12px 20px 16px;
+    border-top: 1px solid var(--line);
+    background: var(--panel-2);
+    font-family: "DM Mono", ui-monospace, monospace;
+    font-size: 11px;
+    color: var(--muted);
+  }
+
+  .foot output { color: var(--pink); font-variant-numeric: tabular-nums; }
+
+  /* ---- after yes ---- */
+  .done {
+    padding: 34px 24px 30px;
+    text-align: center;
+  }
+
+  .done h2 {
+    margin: 0 0 8px;
+    font-family: "Fredoka", sans-serif;
+    font-weight: 500;
+    font-size: 28px;
+  }
+
+  .done p {
+    margin: 0 auto;
+    max-width: 34ch;
+    color: var(--muted);
+    line-height: 1.6;
+    font-size: 15px;
+  }
+
+  .done a {
+    display: inline-block;
+    margin-top: 18px;
+    color: var(--blurple);
+    font-family: "DM Mono", ui-monospace, monospace;
+    font-size: 13px;
+  }
+</style>
+
+<canvas id="spark"></canvas>
+
+<main class="window">
+  <div class="bar">
+    <div class="avatar">D<span class="dot"></span></div>
+    <div class="who">
+      <b>Darren</b>
+      <span>#general-voice &middot; 0 orang di dalam</span>
+    </div>
+    <div class="ping"><i></i> online</div>
+  </div>
+
+  <section id="ask">
+    <div class="body">
+      <div class="bubble">
+        <h1>Chelsea, mau call ga <em>Discord</em>?</h1>
+        <p class="stamp">baru saja &middot; ketik sesuatu dong</p>
+      </div>
+
+      <div class="stage" id="stage">
+        <a class="btn yes" id="yes" href="https://wa.me/6287831118610?text=Ayo%20call%20sekarang" target="_blank" rel="noopener">Mau 💜</a>
+        <button class="btn no" id="no" type="button">Gamau</button>
+      </div>
+    </div>
+
+    <div class="foot">
+      <span>tombol "gamau" kabur <output id="count">0</output>x</span>
+      <span id="hint">latency 12ms</span>
+    </div>
+  </section>
+</main>
+
+<script>
+  var stage = document.getElementById('stage');
+  var no = document.getElementById('no');
+  var yes = document.getElementById('yes');
+  var count = document.getElementById('count');
+  var hint = document.getElementById('hint');
+
+  var taunts = ['Gamau', 'Yakin?', 'Masa sih', 'Coba lagi', 'Susah ya', 'Gamau (?)', 'Hmm...', 'Nyerah aja'];
+  var hints = ['latency 12ms', 'dia lari lagi', 'hampir kena', 'ganti tangan?', 'mouse-nya lelah', 'tombolnya takut', 'udah, klik Mau aja'];
+  var dodges = 0;
+  var last = { x: 0, y: 0 };
+
+  function place(x, y) {
+    last.x = x;
+    last.y = y;
+    no.style.left = x + 'px';
+    no.style.top = y + 'px';
+  }
+
+  function reset() {
+    var s = stage.getBoundingClientRect();
+    var b = no.getBoundingClientRect();
+    place(Math.max(8, s.width * 0.5 + 90), (s.height - b.height) / 2);
+  }
+
+  function dodge() {
+    var s = stage.getBoundingClientRect();
+    var b = no.getBoundingClientRect();
+    var y = yes.getBoundingClientRect();
+    var maxX = Math.max(0, s.width - b.width);
+    var maxY = Math.max(0, s.height - b.height);
+    var x, ny, tries = 0;
+
+    do {
+      x = Math.random() * maxX;
+      ny = Math.random() * maxY;
+      tries++;
+      var overYes = x < (y.right - s.left) && (x + b.width) > (y.left - s.left) &&
+                    ny < (y.bottom - s.top) && (ny + b.height) > (y.top - s.top);
+      var tooClose = Math.abs(x - last.x) < 70 && Math.abs(ny - last.y) < 50;
+    } while ((overYes || tooClose) && tries < 40);
+
+    place(x, ny);
+
+    dodges++;
+    count.textContent = dodges;
+    no.textContent = taunts[Math.min(dodges, taunts.length - 1)];
+    hint.textContent = hints[Math.min(dodges, hints.length - 1)];
+    no.style.transform = 'scale(' + Math.max(0.55, 1 - dodges * 0.05) + ')';
+  }
+
+  no.addEventListener('pointerdown', function (e) { e.preventDefault(); dodge(); });
+  no.addEventListener('mouseenter', dodge);
+  no.addEventListener('focus', dodge);
+  no.addEventListener('click', function (e) { e.preventDefault(); });
+  window.addEventListener('resize', reset);
+
+  // ---- hearts on "Mau" ----
+  var cv = document.getElementById('spark');
+  var ctx = cv.getContext('2d');
+  var bits = [];
+  var running = false;
+
+  function size() {
+    cv.width = window.innerWidth * devicePixelRatio;
+    cv.height = window.innerHeight * devicePixelRatio;
+    ctx.setTransform(devicePixelRatio, 0, 0, devicePixelRatio, 0, 0);
+  }
+  size();
+  window.addEventListener('resize', size);
+
+  function burst() {
+    var r = yes.getBoundingClientRect();
+    var cx = r.left + r.width / 2;
+    var cy = r.top + r.height / 2;
+    for (var i = 0; i < 70; i++) {
+      var a = Math.random() * Math.PI * 2;
+      var sp = 3 + Math.random() * 7;
+      bits.push({
+        x: cx, y: cy,
+        vx: Math.cos(a) * sp,
+        vy: Math.sin(a) * sp - 3,
+        life: 1,
+        s: 8 + Math.random() * 10,
+        rot: Math.random() * Math.PI
+      });
+    }
+    if (!running) { running = true; requestAnimationFrame(tick); }
+  }
+
+  function heart(x, y, s, rot, alpha) {
+    ctx.save();
+    ctx.translate(x, y);
+    ctx.rotate(rot);
+    ctx.globalAlpha = alpha;
+    ctx.fillStyle = Math.random() > 0.5
+      ? getComputedStyle(document.documentElement).getPropertyValue('--pink')
+      : getComputedStyle(document.documentElement).getPropertyValue('--blurple');
+    ctx.beginPath();
+    ctx.moveTo(0, s * 0.3);
+    ctx.bezierCurveTo(s * 0.6, -s * 0.3, s * 0.3, -s * 0.8, 0, -s * 0.35);
+    ctx.bezierCurveTo(-s * 0.3, -s * 0.8, -s * 0.6, -s * 0.3, 0, s * 0.3);
+    ctx.fill();
+    ctx.restore();
+  }
+
+  function tick() {
+    ctx.clearRect(0, 0, cv.width, cv.height);
+    for (var i = bits.length - 1; i >= 0; i--) {
+      var p = bits[i];
+      p.vy += 0.28;
+      p.x += p.vx;
+      p.y += p.vy;
+      p.rot += 0.04;
+      p.life -= 0.012;
+      if (p.life <= 0) { bits.splice(i, 1); continue; }
+      heart(p.x, p.y, p.s, p.rot, Math.min(1, p.life));
+    }
+    if (bits.length) { requestAnimationFrame(tick); }
+    else { running = false; ctx.clearRect(0, 0, cv.width, cv.height); }
+  }
+
+  yes.addEventListener('click', function () {
+    burst();
+    setTimeout(function () {
+      document.getElementById('ask').innerHTML =
+        '<div class="done">' +
+        '<h2>Yeay! 💜</h2>' +
+        '<p>WhatsApp lagi dibuka dengan pesan <b>"Ayo call sekarang"</b> ke +62 878-3111-8610. Tinggal tekan kirim, terus gas ke Discord.</p>' +
+        '<a href="https://wa.me/6287831118610?text=Ayo%20call%20sekarang" target="_blank" rel="noopener">buka WhatsApp lagi &rarr;</a>' +
+        '</div>';
+    }, 700);
+  });
+
+  requestAnimationFrame(reset);
+</script>
