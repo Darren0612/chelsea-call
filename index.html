@@ -376,43 +376,68 @@
   var dodges = 0;
   var last = { x: 0, y: 0 };
 
-  function place(x, y) {
+  var PAD = 6;
+
+  function clamp(v, max) { return Math.max(0, Math.min(v, max)); }
+
+  function box() {
+    var s = stage.getBoundingClientRect();
+    // offsetWidth/Height ignore the shrink transform, so the layout box - not the
+    // smaller painted box - is what we keep inside the stage.
+    var bw = no.offsetWidth, bh = no.offsetHeight;
+    return {
+      left: s.left, top: s.top, w: s.width, h: s.height, bw: bw, bh: bh,
+      maxX: Math.max(0, s.width - bw - PAD),
+      maxY: Math.max(0, s.height - bh - PAD)
+    };
+  }
+
+  function place(x, y, b) {
     last.x = x;
     last.y = y;
-    no.style.left = x + 'px';
-    no.style.top = y + 'px';
+    no.style.left = clamp(x, b.maxX) + 'px';
+    no.style.top = clamp(y, b.maxY) + 'px';
   }
 
   function reset() {
-    var s = stage.getBoundingClientRect();
-    var b = no.getBoundingClientRect();
-    place(Math.max(8, s.width * 0.5 + 90), (s.height - b.height) / 2);
+    var b = box();
+    var y = yes.getBoundingClientRect();
+    var yesRight = y.right - b.left;
+    var gap = b.maxX - yesRight;
+
+    if (gap > 14) {
+      // muat di samping kanan tombol "Mau"
+      place(yesRight + 14, (b.h - b.bh) / 2, b);
+    } else {
+      // layar sempit: taruh di bawah tombol "Mau"
+      place((b.w - b.bw) / 2, (y.bottom - b.top) + 22, b);
+    }
   }
 
   function dodge() {
-    var s = stage.getBoundingClientRect();
-    var b = no.getBoundingClientRect();
-    var y = yes.getBoundingClientRect();
-    var maxX = Math.max(0, s.width - b.width);
-    var maxY = Math.max(0, s.height - b.height);
-    var x, ny, tries = 0;
-
-    do {
-      x = Math.random() * maxX;
-      ny = Math.random() * maxY;
-      tries++;
-      var overYes = x < (y.right - s.left) && (x + b.width) > (y.left - s.left) &&
-                    ny < (y.bottom - s.top) && (ny + b.height) > (y.top - s.top);
-      var tooClose = Math.abs(x - last.x) < 70 && Math.abs(ny - last.y) < 50;
-    } while ((overYes || tooClose) && tries < 40);
-
-    place(x, ny);
-
     dodges++;
     count.textContent = dodges;
+    // ganti label dan ukuran dulu, baru diukur - teks yang lebih panjang
+    // ("Nyerah aja") kalau tidak akan menabrak tepi kanan.
     no.textContent = taunts[Math.min(dodges, taunts.length - 1)];
     hint.textContent = hints[Math.min(dodges, hints.length - 1)];
     no.style.transform = 'scale(' + Math.max(0.55, 1 - dodges * 0.05) + ')';
+
+    var b = box();
+    var y = yes.getBoundingClientRect();
+    var x, ny, tries = 0;
+
+    do {
+      x = Math.random() * b.maxX;
+      ny = Math.random() * b.maxY;
+      tries++;
+      var overYes = x < (y.right - b.left) && (x + b.bw) > (y.left - b.left) &&
+                    ny < (y.bottom - b.top) && (ny + b.bh) > (y.top - b.top);
+      var tooClose = Math.abs(x - last.x) < 70 && Math.abs(ny - last.y) < 50;
+    } while ((overYes || tooClose) && tries < 40);
+
+    place(x, ny, b);
+
   }
 
   no.addEventListener('pointerdown', function (e) { e.preventDefault(); dodge(); });
